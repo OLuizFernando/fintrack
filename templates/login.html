@@ -1,26 +1,23 @@
-{% extends 'layout.html' %}
+{% extends 'layout.html' %} {% block title %} Log In {% endblock %} {% block content %}
 
-{% block title %} Log In {% endblock %}
-
-{% block content %}
-
-<main class="container flex-grow-1 d-flex flex-column justify-content-center">
-    <div class="d-flex flex-row align-items-center">
-        <div class="col">
-            <h1 class="montserrat-black mb-3">Log In</h1>
-            <p class="montserrat-extrabold">It's time to track your finances</p>
-        </div>
-        <div class="col">
-            <div class="mb-3">
-                <label for="userInput" class="form-label">User</label>
-                <input type="text" class="form-control" id="userInput">
-            </div>
-            <div class="mb-3">
-                <label for="passwordInput" class="form-label">Password</label>
-                <input type="password" class="form-control" id="passwordInput">
-            </div>
-        </div>
+<main class="flex-grow-1 d-flex flex-column justify-content-center align-items-center border">
+  <div class="d-flex align-items-center">
+    <div class="me-md-3">
+      <h1 class="montserrat-black mb-3">Log In</h1>
+      <p class="montserrat-regular">It's time to track your finances</p>
+      <img class="img-fluid" src="../static/images/cash_bag.png" alt="Cash bag emoji" />
     </div>
+    <div class="ms-md-3">
+      <div class="mb-3">
+        <label for="userInput" class="form-label">User</label>
+        <input type="text" class="form-control" id="userInput" />
+      </div>
+      <div class="mb-3">
+        <label for="passwordInput" class="form-label montserrat-regular">Password</label>
+        <input type="password" class="form-control montserrat-regular" id="passwordInput" />
+      </div>
+    </div>
+  </div>
 </main>
 
 {% endblock %}
