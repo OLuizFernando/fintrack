@@ -2,8 +2,25 @@
 
 {% block title %} Log In {% endblock %}
 
-{% block main %}
+{% block content %}
 
-<h1 class="montserrat-black my-5">Log In</h1>
+<main class="container flex-grow-1 d-flex flex-column justify-content-center">
+    <div class="d-flex flex-row align-items-center">
+        <div class="col">
+            <h1 class="montserrat-black mb-3">Log In</h1>
+            <p class="montserrat-extrabold">It's time to track your finances</p>
+        </div>
+        <div class="col">
+            <div class="mb-3">
+                <label for="userInput" class="form-label">User</label>
+                <input type="text" class="form-control" id="userInput">
+            </div>
+            <div class="mb-3">
+                <label for="passwordInput" class="form-label">Password</label>
+                <input type="password" class="form-control" id="passwordInput">
+            </div>
+        </div>
+    </div>
+</main>
 
 {% endblock %}
