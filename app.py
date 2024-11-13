@@ -1,4 +1,4 @@
-from flask import Flask, redirect, render_template, session
+from flask import Flask, redirect, render_template, request, session
 from helpers import login_required
 
 app = Flask(__name__)
@@ -16,9 +16,15 @@ def index():
 def dashboard():
     return render_template("dashboard.html")
 
-@app.route("/login")
+@app.route("/login", methods=["GET", "POST"])
 def login():
-    return render_template("login.html")
+    if request.method == "GET":
+        return render_template("login.html")
+
+@app.route("/register", methods=["GET", "POST"])
+def register():
+    if request.method == "GET":
+        return render_template("register.html")
 
 if __name__ == "__main__":
     app.run(debug=True)
