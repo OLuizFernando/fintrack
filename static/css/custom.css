@@ -1,11 +1,47 @@
 .bg-primary {
-  background-color: #a7c957 !important;
+  background-color: #386641 !important;
 }
 
 .bg-primary-subtle {
-  background-color: #6a994e !important;
+  background-color: #96d59a !important;
 }
 
-.bg-secondary {
-  background-color: #386641 !important;
+.btn-outline-primary {
+  border-color: #386641;
+  color: #386641;
+}
+
+.btn-outline-primary:hover {
+  border-color: #386641;
+  background-color: #386641;
+}
+
+.btn-outline-primary:active {
+  border-color: #305737 !important;
+  background-color: #305737 !important;
+}
+
+.form-control:focus {
+  border-color: #96d59a;
+  box-shadow: 0 0 0 0.2rem #96d59a70;
+  outline: none;
+}
+
+.link-primary {
+  color: #386641 !important;
+  text-decoration: none !important;
+}
+
+.link-primary:hover {
+  color: #386641 !important;
+  text-decoration: underline !important;
+}
+
+.link-primary:focus,
+.link-primary:active {
+  color: #305737 !important;
+}
+
+.text-primary {
+  color: #386641 !important;
 }

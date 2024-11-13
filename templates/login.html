@@ -1,20 +1,27 @@
 {% extends 'layout.html' %} {% block title %} Log In {% endblock %} {% block content %}
 
-<main class="flex-grow-1 d-flex flex-column justify-content-center align-items-center border">
+<main class="flex-grow-1 d-flex flex-column justify-content-center align-items-center">
   <div class="d-flex align-items-center">
-    <div class="me-md-3">
-      <h1 class="montserrat-black mb-3">Log In</h1>
-      <p class="montserrat-regular">It's time to track your finances</p>
-      <img class="img-fluid" src="../static/images/cash_bag.png" alt="Cash bag emoji" />
+    <div class="d-none d-md-flex flex-column align-items-end me-5">
+      <h1 class="montserrat-extrabold mb-3 mt-auto text-primary">Log In</h1>
+      <p class="montserrat-regular mb-4">It's time to track your finances!</p>
+      <img src="../static/images/cash_bag.png" alt="Cash bag emoji" width="250" />
     </div>
-    <div class="ms-md-3">
-      <div class="mb-3">
-        <label for="userInput" class="form-label">User</label>
-        <input type="text" class="form-control" id="userInput" />
+    <div class="ms-0 ms-md-5 d-flex flex-column">
+      <div class="d-flex d-md-none flex-column align-items-center mb-4">
+        <h1 class="montserrat-extrabold mt-auto text-primary">Log In</h1>
       </div>
       <div class="mb-3">
-        <label for="passwordInput" class="form-label montserrat-regular">Password</label>
-        <input type="password" class="form-control montserrat-regular" id="passwordInput" />
+        <label for="userInput" class="form-label montserrat-regular px-3">Username</label>
+        <input type="text" class="form-control montserrat-regular rounded-5 px-4 shadow-sm" id="userInput" />
+      </div>
+      <div class="mb-5">
+        <label for="passwordInput" class="form-label montserrat-regular px-3">Password</label>
+        <input type="password" class="form-control rounded-5 px-4 shadow-sm" id="passwordInput" />
+      </div>
+      <div class="d-flex flex-column align-items-center">
+        <button type="submit" class="btn btn-outline-primary w-100 rounded-5 shadow-sm mb-2" id="loginButton">Log In</button>
+        <p class="text-secondary">Don't have an account? <a class="link-primary" href="/register">Register here</a></p>
       </div>
     </div>
   </div>
