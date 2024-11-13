@@ -11,18 +11,20 @@
       <div class="d-flex d-md-none flex-column align-items-center mb-4">
         <h1 class="montserrat-extrabold mt-auto text-primary">Log In</h1>
       </div>
-      <div class="mb-3">
-        <label for="usernameInput" class="form-label montserrat-regular px-3">Username</label>
-        <input type="text" class="form-control montserrat-regular rounded-5 px-4 shadow-sm" id="usernameInput" />
-      </div>
-      <div class="mb-5">
-        <label for="passwordInput" class="form-label montserrat-regular px-3">Password</label>
-        <input type="password" class="form-control rounded-5 px-4 shadow-sm" id="passwordInput" />
-      </div>
-      <div class="d-flex flex-column align-items-center">
-        <button type="submit" class="btn btn-outline-primary w-100 rounded-5 shadow-sm mb-2" id="loginButton">Log In</button>
-        <p class="text-secondary">Don't have an account? <a class="link-primary" href="/register">Register here</a></p>
-      </div>
+      <form action="/login" method="post">
+        <div class="mb-3">
+          <label for="usernameInput" class="form-label montserrat-regular px-3">Username</label>
+          <input required type="text" class="form-control montserrat-regular rounded-5 px-4 shadow-sm" id="usernameInput" />
+        </div>
+        <div class="mb-5">
+          <label for="passwordInput" class="form-label montserrat-regular px-3">Password</label>
+          <input required type="password" class="form-control rounded-5 px-4 shadow-sm" id="passwordInput" />
+        </div>
+        <div class="d-flex flex-column align-items-center">
+          <button type="submit" class="btn btn-outline-primary w-100 rounded-5 shadow-sm mb-2" id="loginButton">Log In</button>
+          <p class="text-secondary">Don't have an account? <a class="link-primary" href="/register">Register here</a></p>
+        </div>
+      </form>
     </div>
   </div>
 </main>
