@@ -1,20 +1,18 @@
-.montserrat-regular {
-  font-family: "Montserrat", sans-serif;
-  font-optical-sizing: auto;
-  font-weight: 400;
-  font-style: normal;
+body {
+  background-image: url("../images/pattern_bg.png");
+  background-repeat: repeat;
+  background-size: 400px 400px;
+  position: relative;
 }
 
-.montserrat-semibold {
-  font-family: "Montserrat", sans-serif;
-  font-optical-sizing: auto;
-  font-weight: 600;
-  font-style: normal;
-}
-
-.montserrat-extrabold {
-  font-family: "Montserrat", sans-serif;
-  font-optical-sizing: auto;
-  font-weight: 800;
-  font-style: normal;
+body::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(241, 249, 242, 0.95);
+  pointer-events: none;
+  z-index: -1;
 }
