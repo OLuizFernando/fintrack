@@ -31,7 +31,7 @@
           <span class="navbar-toggler-icon"></span>
         </button>
         <div class="collapse navbar-collapse" id="navbar">
-          {% if not session %}
+          {% if not session["user_id"] %}
           <ul class="navbar-nav ms-auto mt-auto">
             <li class="nav-item mt-3 mt-md-0 mb-2 mb-md-0">
               <a class="montserrat-regular fs-5 nav-link mx-2" href="/register"><i class="bi bi-person-plus me-2"></i>Register</a>
@@ -45,6 +45,13 @@
       </div>
     </nav>
 
-    {% block content %}{% endblock %}
+    {% if get_flashed_messages() %} {% for message in get_flashed_messages(with_categories=true) %}
+
+    <div class="alert alert-{{ message[0] }} alert-dismissible fade show rounded-top-0 mb-0 text-center" role="alert">
+      {{ message[1] }}
+      <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+
+    {% endfor %} {% endif %} {% block content %}{% endblock %}
   </body>
 </html>

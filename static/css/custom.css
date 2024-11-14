@@ -1,3 +1,9 @@
+.alert-success {
+  background-color: #96d59a70;
+  border-color: #96d59a;
+  color: #386641;
+}
+
 .bg-primary {
   background-color: #386641 !important;
 }
@@ -11,7 +17,8 @@
   color: #386641;
 }
 
-.btn-outline-primary:hover {
+.btn-outline-primary:hover,
+.btn-outline-primary:focus {
   border-color: #386641;
   background-color: #386641;
 }
