@@ -4,6 +4,14 @@ body {
   background-size: 400px 400px;
 }
 
+.bg-yellow {
+  background-color: #d2b02e;
+}
+
+.bg-red {
+  background-color: #c41508;
+}
+
 .montserrat-regular {
   font-family: "Montserrat", sans-serif;
   font-optical-sizing: auto;

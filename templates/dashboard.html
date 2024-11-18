@@ -1,5 +1,56 @@
-{% extends 'layout.html' %} {% block title %} Dashboard {% endblock %} {% block content %}
+{% extends 'layout.html' %} {% block title %} Log In {% endblock %} {% block content %}
 
-<h1 class="montserrat-medium my-5">Dashboard</h1>
+<main class="flex-grow-1 d-flex flex-column">
+  <div class="container">
+    <h1 class="montserrat-extrabold text-primary my-5">Dashboard</h1>
+    <div class="row">
+      <div class="col-lg-4 col-12">
+        <div class="bg-light shadow rounded-4 p-4">
+          <div class="row">
+            <div class="col">
+              <span class="montserrat-regular text-secondary"> Current balance: </span>
+              <h3 class="montserrat-semibold mt-2">$ 500.00</h3>
+            </div>
+            <div class="col d-flex align-items-center justify-content-end px-4">
+              <div class="bg-yellow rounded-circle p-3">
+                <img src="../static/images/wallet_icon.png" width="30" alt="Wallet icon" />
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="col-lg-4 col-12">
+        <div class="bg-light shadow rounded-4 h-100 p-4">
+          <div class="row">
+            <div class="col">
+              <span class="montserrat-regular text-secondary"> Income: </span>
+              <h3 class="montserrat-semibold mt-2">$ 125.00</h3>
+            </div>
+            <div class="col d-flex align-items-center justify-content-end px-4">
+              <div class="bg-primary rounded-circle p-3">
+                <img src="../static/images/income_arrow_icon.png" width="30" alt="Income arrow icon" />
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="col-lg-4 col-12">
+        <div class="bg-light shadow rounded-4 h-100 p-4">
+          <div class="row">
+            <div class="col">
+              <span class="montserrat-regular text-secondary"> Expenses: </span>
+              <h3 class="montserrat-semibold mt-2">$ 75.50</h3>
+            </div>
+            <div class="col d-flex align-items-center justify-content-end px-4">
+              <div class="bg-red rounded-circle p-3">
+                <img src="../static/images/expenses_arrow_icon.png" width="30" alt="Expenses arrow icon" />
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</main>
 
 {% endblock %}
