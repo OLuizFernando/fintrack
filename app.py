@@ -25,12 +25,6 @@ def index():
         return redirect("/login")
 
 
-@app.route("/current-balance")
-@login_required
-def current_balance():
-    return render_template("current-balance.html")
-
-
 @app.route("/dashboard")
 @login_required
 def dashboard():
@@ -43,10 +37,10 @@ def expenses():
     return render_template("expenses.html")
 
 
-@app.route("/income")
+@app.route("/incomes")
 @login_required
-def income():
-    return render_template("income.html")
+def incomes():
+    return render_template("incomes.html")
 
 
 @app.route("/login", methods=["GET", "POST"])
