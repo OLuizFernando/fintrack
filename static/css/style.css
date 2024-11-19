@@ -43,6 +43,10 @@ body {
   font-style: normal;
 }
 
+.text-red {
+  color: #c41508;
+}
+
 .text-tertiary {
   color: #00000030;
 }
