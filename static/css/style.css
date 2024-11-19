@@ -12,6 +12,16 @@ body {
   background-color: #c41508;
 }
 
+.clickable {
+  cursor: pointer;
+  transition: filter 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+}
+
+.clickable:hover {
+  filter: brightness(0.95);
+  box-shadow: 0 0 0 0.2rem rgba(0, 0, 0, 0.1);
+}
+
 .montserrat-regular {
   font-family: "Montserrat", sans-serif;
   font-optical-sizing: auto;
@@ -31,4 +41,8 @@ body {
   font-optical-sizing: auto;
   font-weight: 800;
   font-style: normal;
+}
+
+.text-tertiary {
+  color: #00000030;
 }
