@@ -4,6 +4,12 @@
   color: #386641;
 }
 
+.alert-warning {
+  background-color: #fff3cd85;
+  border-color: #ffeeba;
+  color: #856404;
+}
+
 .bg-primary {
   background-color: #386641 !important;
 }
