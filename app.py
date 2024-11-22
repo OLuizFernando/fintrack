@@ -26,6 +26,34 @@ def index():
         return redirect("/login")
 
 
+@app.route("/add-transaction", methods=["POST"])
+def add_transaction():
+    transaction_type = request.form.get("transactionTypeRadio")
+    category = request.form.get("categorySelect")
+    title = request.form.get("titleInput")
+    date = request.form.get("dateInput")
+    amount = request.form.get("amountInput")
+    if amount:
+        amount = float(amount.replace("$", "").replace(",", ""))
+    
+    if not transaction_type:
+        flash("You must choose the type of transaction.", "warning")
+        return redirect("/dashboard")
+    
+    if not date:
+        db_execute("""
+        INSERT INTO transactions (user_id, title, amount, type, category, created_at)
+        VALUES (%s, %s, %s, %s, %s, CURRENT_DATE);
+        """, params=[session["user_id"], title, amount, transaction_type, category])
+    else:
+        db_execute("""
+        INSERT INTO transactions (user_id, title, amount, type, category, created_at)
+        VALUES (%s, %s, %s, %s, %s, %s);
+        """, params=[session["user_id"], title, amount, transaction_type, category, date])
+
+    flash("You've successfully added a new transaction.", "success")
+    return redirect("/dashboard")
+
 @app.route("/dashboard")
 @login_required
 def dashboard():
@@ -58,9 +86,11 @@ def login():
         flash("You must fill in all fields.", "warning")
         return render_template("login.html")
     
-    rows = db_execute(
-        "SELECT * FROM users WHERE username = %s", params=[username], return_value=True # gets the user information
-    )
+    rows = db_execute("""
+        SELECT *
+        FROM users
+        WHERE username = %s
+        """, params=[username], return_value=True) # gets the user information
 
     if len(rows) != 1 or not check_password_hash(
         rows[0][2], password # compares "hash" field with the typed password in hash function
@@ -92,9 +122,11 @@ def register():
         flash("Check if you confirmed your password correctly.", "warning")
         return render_template("register.html")
     
-    username_is_already_taken = db_execute(
-        "SELECT 1 FROM users WHERE username = %s", params=[username], return_value=True
-    )
+    username_is_already_taken = db_execute("""
+        SELECT 1
+        FROM users
+        WHERE username = %s
+        """, params=[username], return_value=True)
 
     if username_is_already_taken:
         flash("Sorry, this username is already taken. Please choose another.", "warning")
@@ -102,9 +134,10 @@ def register():
     
     password_hash = generate_password_hash(password)
 
-    db_execute(
-        "INSERT INTO users (username, hash) VALUES (%s, %s)", params=[username, password_hash]
-    )
+    db_execute("""
+        INSERT INTO users (username, hash)
+        VALUES (%s, %s)
+        """, params=[username, password_hash])
 
     flash("Registration successful! You can now log in to your account.", "success")
     return render_template("login.html")
