@@ -9,6 +9,7 @@ load_dotenv()
 
 app = Flask(__name__)
 app.secret_key = os.getenv("SECRET_KEY")
+app.config['SESSION_PERMANENT'] = True
 app.config["DATABASE"] = {
     "host": os.getenv("PGHOST"),
     "dbname": os.getenv("PGDATABASE"),
