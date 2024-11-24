@@ -42,13 +42,13 @@ def add_transaction():
     
     if not date:
         db_execute("""
-        INSERT INTO transactions (user_id, title, amount, type, category, created_at)
-        VALUES (%s, %s, %s, %s, %s, CURRENT_DATE);
+            INSERT INTO transactions (user_id, title, amount, type, category, created_at)
+            VALUES (%s, %s, %s, %s, %s, CURRENT_DATE)
         """, params=[session["user_id"], title, amount, transaction_type, category])
     else:
         db_execute("""
-        INSERT INTO transactions (user_id, title, amount, type, category, created_at)
-        VALUES (%s, %s, %s, %s, %s, %s);
+            INSERT INTO transactions (user_id, title, amount, type, category, created_at)
+            VALUES (%s, %s, %s, %s, %s, %s)
         """, params=[session["user_id"], title, amount, transaction_type, category, date])
 
     flash("You've successfully added a new transaction.", "success")
@@ -57,7 +57,28 @@ def add_transaction():
 @app.route("/dashboard")
 @login_required
 def dashboard():
-    return render_template("dashboard.html")
+    total_income = db_execute("""
+        SELECT SUM(amount) AS total_income
+        FROM transactions
+        WHERE type = 'income'
+        AND user_id = %s
+    """, params=[session["user_id"]], return_value=True)[0][0]
+
+    total_expenses = db_execute("""
+        SELECT SUM(amount) AS total_expenses
+        FROM transactions
+        WHERE type = 'expense'
+        AND user_id = %s
+    """, params=[session["user_id"]], return_value=True)[0][0]
+
+    if not total_income:
+        total_income = 0
+    
+    if not total_expenses:
+        total_expenses = 0
+
+    current_balance = total_income - total_expenses
+    return render_template("dashboard.html", current_balance=current_balance, total_income=total_income, total_expenses=total_expenses)
 
 
 @app.route("/expenses")
@@ -66,10 +87,10 @@ def expenses():
     return render_template("expenses.html")
 
 
-@app.route("/incomes")
+@app.route("/income")
 @login_required
-def incomes():
-    return render_template("incomes.html")
+def income():
+    return render_template("income.html")
 
 
 @app.route("/login", methods=["GET", "POST"])
@@ -90,7 +111,7 @@ def login():
         SELECT *
         FROM users
         WHERE username = %s
-        """, params=[username], return_value=True) # gets the user information
+    """, params=[username], return_value=True) # gets the user information
 
     if len(rows) != 1 or not check_password_hash(
         rows[0][2], password # compares "hash" field with the typed password in hash function
@@ -126,7 +147,7 @@ def register():
         SELECT 1
         FROM users
         WHERE username = %s
-        """, params=[username], return_value=True)
+    """, params=[username], return_value=True)
 
     if username_is_already_taken:
         flash("Sorry, this username is already taken. Please choose another.", "warning")
@@ -137,10 +158,19 @@ def register():
     db_execute("""
         INSERT INTO users (username, hash)
         VALUES (%s, %s)
-        """, params=[username, password_hash])
+    """, params=[username, password_hash])
 
     flash("Registration successful! You can now log in to your account.", "success")
     return render_template("login.html")
+
+
+@app.template_filter('money')
+def format_money(value):
+    try:
+        return f"{float(value):,.2f}"
+    except (ValueError, TypeError):
+        return value
+
 
 
 def get_db():
