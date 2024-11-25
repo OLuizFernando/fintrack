@@ -99,7 +99,7 @@
       </div>
     </form>
     {% if transactions%}
-    <div class="bg-light shadow rounded-4 py-4 px-4">
+    <div class="table-responsive bg-light shadow rounded-4 py-4 px-auto px-sm-4 px-lg-5">
       <table class="table table-hover table-light px-auto px-lg-4">
         <thead>
           <tr>
@@ -108,6 +108,7 @@
             <th scope="col">Amount</th>
             <th scope="col">Date</th>
             <th scope="col">Type</th>
+            <th scope="col"></th>
           </tr>
         </thead>
         <tbody>
@@ -119,6 +120,14 @@
             <td>${{ transaction[2] | money }}</td>
             <td>{{ transaction[3].strftime('%Y/%m/%d') }}</td>
             <td class="{% if transaction[4] == 'income' %}text-success{% else %}text-danger{% endif %}">{{ transaction[4] | capitalize }}</td>
+            <td>
+              <form action="/delete-transaction" method="POST" class="delete-form m-0">
+                <input type="hidden" name="transaction_id" value="{{ transaction[5] }}" />
+                <button type="button" class="btn btn-sm btn-outline-danger delete-button">
+                  <i class="bi bi-trash3"></i>
+                </button>
+              </form>
+            </td>
           </tr>
 
           {% endfor %}
@@ -130,6 +139,7 @@
 </main>
 
 <script>
+  // dollar mask for amount input
   const amountInput = document.getElementById("amountInput");
 
   amountInput.addEventListener("input", (e) => {
@@ -147,6 +157,16 @@
     if (e.target.value === "$0.00") {
       e.target.value = "";
     }
+  });
+
+  // confirmation box when delete a transaction
+  document.querySelectorAll(".delete-button").forEach((button) => {
+    button.addEventListener("click", function () {
+      const form = this.closest(".delete-form");
+      if (confirm("Are you sure you want to delete this transaction?")) {
+        form.submit();
+      }
+    });
   });
 </script>
 
