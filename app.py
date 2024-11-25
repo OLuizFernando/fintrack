@@ -1,7 +1,7 @@
 import os
 import psycopg2
 from dotenv import load_dotenv
-from flask import Flask, flash, g, redirect, render_template, request, session, jsonify
+from flask import Flask, flash, g, redirect, render_template, request, session
 from helpers import login_required
 from werkzeug.security import check_password_hash, generate_password_hash
 
@@ -9,7 +9,7 @@ load_dotenv()
 
 app = Flask(__name__)
 app.secret_key = os.getenv("SECRET_KEY")
-app.config['SESSION_PERMANENT'] = True
+app.config["SESSION_PERMANENT"] = True
 app.config["DATABASE"] = {
     "host": os.getenv("PGHOST"),
     "dbname": os.getenv("PGDATABASE"),
@@ -78,7 +78,15 @@ def dashboard():
         total_expenses = 0
 
     current_balance = total_income - total_expenses
-    return render_template("dashboard.html", current_balance=current_balance, total_income=total_income, total_expenses=total_expenses)
+
+    transactions = db_execute("""
+        SELECT category, title, amount, created_at, type AS transactions
+        FROM transactions
+        WHERE user_id = %s
+        ORDER BY created_at
+    """, params=[session["user_id"]], return_value=True)
+
+    return render_template("dashboard.html", current_balance=current_balance, total_income=total_income, total_expenses=total_expenses, transactions=transactions)
 
 
 @app.route("/expenses")
@@ -164,13 +172,12 @@ def register():
     return render_template("login.html")
 
 
-@app.template_filter('money')
+@app.template_filter("money")
 def format_money(value):
     try:
         return f"{float(value):,.2f}"
     except (ValueError, TypeError):
         return value
-
 
 
 def get_db():
