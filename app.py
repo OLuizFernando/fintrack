@@ -80,14 +80,30 @@ def dashboard():
     current_balance = total_income - total_expenses
 
     transactions = db_execute("""
-        SELECT category, title, amount, created_at, type AS transactions
+        SELECT category, title, amount, created_at, type, id  AS transactions
         FROM transactions
         WHERE user_id = %s
-        ORDER BY created_at
+        ORDER BY created_at DESC
     """, params=[session["user_id"]], return_value=True)
 
     return render_template("dashboard.html", current_balance=current_balance, total_income=total_income, total_expenses=total_expenses, transactions=transactions)
 
+
+@app.route("/delete-transaction", methods=["POST"])
+@login_required
+def delete_transaction():
+    transaction_id = request.form.get("transaction_id")
+
+    if transaction_id:
+        db_execute("""
+            DELETE FROM transactions
+            WHERE user_id = %s
+            AND id = %s
+        """, params=[session["user_id"], transaction_id])
+        flash("Transaction deleted successfully!", "success")
+    else:
+        flash("Transaction ID not provided.", "warning")
+    return redirect("/dashboard")
 
 @app.route("/expenses")
 @login_required
@@ -118,7 +134,7 @@ def login():
     rows = db_execute("""
         SELECT *
         FROM users
-        WHERE username = %s
+        WHERE username ILIKE %s
     """, params=[username], return_value=True) # gets the user information
 
     if len(rows) != 1 or not check_password_hash(
