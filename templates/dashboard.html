@@ -1,7 +1,7 @@
 {% extends 'layout.html' %} {% block title %} Dashboard {% endblock %} {% block content %}
 
 <main class="flex-grow-1 d-flex flex-column">
-  <div class="container pb-3 pb-lg-auto">
+  <div class="container pb-4 pb-lg-auto">
     <h1 class="montserrat-extrabold text-primary my-5">Dashboard</h1>
     <div class="row mb-4">
       <div class="col-lg-4 col-12 mb-3 mb-lg-0">
@@ -101,7 +101,7 @@
     {% if transactions%}
     <div class="table-responsive bg-light shadow rounded-4 py-4 px-auto px-sm-4 px-lg-5">
       <table class="table table-hover table-light px-auto px-lg-4">
-        <thead>
+        <thead class="montserrat-semibold">
           <tr>
             <th scope="col" class="d-none d-sm-table-cell">Category</th>
             <th scope="col">Title</th>
@@ -111,18 +111,19 @@
             <th scope="col"></th>
           </tr>
         </thead>
-        <tbody>
+        <tbody class="montserrat-regular">
           {% for transaction in transactions %}
 
           <tr>
-            <td class="d-none d-sm-table-cell">{{ transaction[0] }}</td>
-            <td>{{ transaction[1] }}</td>
-            <td>${{ transaction[2] | money }}</td>
-            <td>{{ transaction[3].strftime('%Y/%m/%d') }}</td>
-            <td class="{% if transaction[4] == 'income' %}text-success{% else %}text-danger{% endif %}">{{ transaction[4] | capitalize }}</td>
-            <td>
+            <td class="d-none d-sm-table-cell align-middle">{{ transaction[0] }}</td>
+            <td class="align-middle">{{ transaction[1] }}</td>
+            <td class="align-middle">${{ transaction[2] | money }}</td>
+            <td class="align-middle">{{ transaction[3].strftime('%Y/%m/%d') }}</td>
+            <td class="{% if transaction[4] == 'income' %}text-success{% else %}text-danger{% endif %} align-middle">{{ transaction[4] | capitalize }}</td>
+            <td class="align-middle">
               <form action="/delete-transaction" method="POST" class="delete-form m-0">
                 <input type="hidden" name="transaction_id" value="{{ transaction[5] }}" />
+                <input type="hidden" name="called_in" value="/dashboard" />
                 <button type="button" class="btn btn-sm btn-outline-danger delete-button">
                   <i class="bi bi-trash3"></i>
                 </button>
