@@ -93,6 +93,7 @@ def dashboard():
 @login_required
 def delete_transaction():
     transaction_id = request.form.get("transaction_id")
+    called_in = request.form.get("called_in")
 
     if transaction_id:
         db_execute("""
@@ -100,21 +101,37 @@ def delete_transaction():
             WHERE user_id = %s
             AND id = %s
         """, params=[session["user_id"], transaction_id])
-        flash("Transaction deleted successfully!", "success")
+        flash("You've deleted a transaction!", "danger")
     else:
         flash("Transaction ID not provided.", "warning")
-    return redirect("/dashboard")
+    return redirect(called_in)
 
 @app.route("/expenses")
 @login_required
 def expenses():
-    return render_template("expenses.html")
+    expenses = db_execute("""
+        SELECT category, title, amount, created_at, type, id  AS expenses
+        FROM transactions
+        WHERE user_id = %s
+        AND type = 'expense'
+        ORDER BY created_at DESC
+    """, params=[session["user_id"]], return_value=True)
+
+    return render_template("expenses.html", expenses=expenses)
 
 
 @app.route("/income")
 @login_required
 def income():
-    return render_template("income.html")
+    income_list = db_execute("""
+        SELECT category, title, amount, created_at, type, id  AS income_list
+        FROM transactions
+        WHERE user_id = %s
+        AND type = 'income'
+        ORDER BY created_at DESC
+    """, params=[session["user_id"]], return_value=True)
+
+    return render_template("income.html", income_list=income_list)
 
 
 @app.route("/login", methods=["GET", "POST"])
