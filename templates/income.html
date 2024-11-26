@@ -1,0 +1,59 @@
+{% extends 'layout.html' %} {% block title %} Income {% endblock %} {% block content %}
+
+<main class="flex-grow-1 d-flex flex-column">
+  <div class="container pb-4 pb-lg-auto">
+    <h1 class="montserrat-extrabold text-primary my-5">Income</h1>
+    {% if income_list %}
+    <div class="table-responsive bg-light shadow rounded-4 py-4 px-auto px-sm-4 px-lg-5">
+      <table class="table table-hover table-light px-auto px-lg-4">
+        <thead class="montserrat-semibold">
+          <tr>
+            <th scope="col" class="d-none d-sm-table-cell">Category</th>
+            <th scope="col">Title</th>
+            <th scope="col">Amount</th>
+            <th scope="col">Date</th>
+            <th scope="col">Type</th>
+            <th scope="col"></th>
+          </tr>
+        </thead>
+        <tbody class="montserrat-regular">
+          {% for income in income_list %}
+
+          <tr>
+            <td class="d-none d-sm-table-cell align-middle">{{ income[0] }}</td>
+            <td class="align-middle">{{ income[1] }}</td>
+            <td class="align-middle">${{ income[2] | money }}</td>
+            <td class="align-middle">{{ income[3].strftime('%Y/%m/%d') }}</td>
+            <td class="text-success align-middle">{{ income[4] | capitalize }}</td>
+            <td class="align-middle">
+              <form action="/delete-transaction" method="POST" class="delete-form m-0">
+                <input type="hidden" name="transaction_id" value="{{ income[5] }}" />
+                <input type="hidden" name="called_in" value="/income" />
+                <button type="button" class="btn btn-sm btn-outline-danger delete-button">
+                  <i class="bi bi-trash3"></i>
+                </button>
+              </form>
+            </td>
+          </tr>
+
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+    {% endif %}
+  </div>
+</main>
+
+<script>
+  // confirmation box when delete a income
+  document.querySelectorAll(".delete-button").forEach((button) => {
+    button.addEventListener("click", function () {
+      const form = this.closest(".delete-form");
+      if (confirm("Are you sure you want to delete this income?")) {
+        form.submit();
+      }
+    });
+  });
+</script>
+
+{% endblock %}
