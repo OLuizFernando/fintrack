@@ -1,5 +1,7 @@
+import json
 import os
 import psycopg2
+from psycopg2.extras import RealDictCursor
 from dotenv import load_dotenv
 from flask import Flask, flash, g, redirect, render_template, request, session
 from helpers import login_required
@@ -62,14 +64,14 @@ def dashboard():
         FROM transactions
         WHERE type = 'income'
         AND user_id = %s
-    """, params=[session["user_id"]], return_value=True)[0][0]
+    """, params=[session["user_id"]], return_value=True)[0]["total_income"]
 
     total_expenses = db_execute("""
         SELECT SUM(amount) AS total_expenses
         FROM transactions
         WHERE type = 'expense'
         AND user_id = %s
-    """, params=[session["user_id"]], return_value=True)[0][0]
+    """, params=[session["user_id"]], return_value=True)[0]["total_expenses"]
 
     if not total_income:
         total_income = 0
@@ -80,7 +82,7 @@ def dashboard():
     current_balance = total_income - total_expenses
 
     transactions = db_execute("""
-        SELECT category, title, amount, created_at, type, id  AS transactions
+        SELECT category, title, amount, created_at, type, id
         FROM transactions
         WHERE user_id = %s
         ORDER BY created_at DESC
@@ -110,7 +112,7 @@ def delete_transaction():
 @login_required
 def expenses():
     expenses = db_execute("""
-        SELECT category, title, amount, created_at, type, id  AS expenses
+        SELECT category, title, amount, created_at, type, id
         FROM transactions
         WHERE user_id = %s
         AND type = 'expense'
@@ -124,7 +126,7 @@ def expenses():
 @login_required
 def income():
     income_list = db_execute("""
-        SELECT category, title, amount, created_at, type, id  AS income_list
+        SELECT category, title, amount, created_at, type, id
         FROM transactions
         WHERE user_id = %s
         AND type = 'income'
@@ -155,12 +157,12 @@ def login():
     """, params=[username], return_value=True) # gets the user information
 
     if len(rows) != 1 or not check_password_hash(
-        rows[0][2], password # compares "hash" field with the typed password in hash function
+        rows[0]["hash"], password # compares "hash" field with the typed password in hash function
     ):
         flash("Invalid username and/or password.", "warning")
         return render_template("login.html")
     
-    session["user_id"] = rows[0][0] # creates a new active session with the user id
+    session["user_id"] = rows[0]["id"] # creates a new active session with the user id
 
     return redirect("/")
 
@@ -221,18 +223,23 @@ def get_db():
         password=app.config["DATABASE"]["password"]
     )
 
-
 def db_execute(query, params=None, return_value=False):
     db = get_db()
-    cursor = db.cursor()
-    cursor.execute(query, params)
+    cursor_factory = RealDictCursor if return_value else None
+    cursor = db.cursor(cursor_factory=cursor_factory)
     
-    if return_value:
-        results = cursor.fetchall()
-        db.close()
-        return results
-    else:
-        db.commit()
+    try:
+        cursor.execute(query, params)
+        if return_value:
+            results = cursor.fetchall()
+            return results
+        else:
+            db.commit()
+    except Exception as e:
+        db.rollback()
+        raise e
+    finally:
+        cursor.close()
         db.close()
     
 

@@ -115,14 +115,14 @@
           {% for transaction in transactions %}
 
           <tr>
-            <td class="d-none d-sm-table-cell align-middle">{{ transaction[0] }}</td>
-            <td class="align-middle">{{ transaction[1] }}</td>
-            <td class="align-middle">${{ transaction[2] | money }}</td>
-            <td class="align-middle">{{ transaction[3].strftime('%Y/%m/%d') }}</td>
-            <td class="{% if transaction[4] == 'income' %}text-success{% else %}text-danger{% endif %} align-middle">{{ transaction[4] | capitalize }}</td>
+            <td class="d-none d-sm-table-cell align-middle">{{ transaction["category"] }}</td>
+            <td class="align-middle">{{ transaction["title"] }}</td>
+            <td class="align-middle">${{ transaction["amount"] | money }}</td>
+            <td class="align-middle">{{ transaction["created_at"].strftime('%Y/%m/%d') }}</td>
+            <td class="{% if transaction['type'] == 'income' %}text-success{% else %}text-danger{% endif %} align-middle">{{ transaction["type"] | capitalize }}</td>
             <td class="align-middle">
               <form action="/delete-transaction" method="POST" class="delete-form m-0">
-                <input type="hidden" name="transaction_id" value="{{ transaction[5] }}" />
+                <input type="hidden" name="transaction_id" value="{{ transaction['id'] }}" />
                 <input type="hidden" name="called_in" value="/dashboard" />
                 <button type="button" class="btn btn-sm btn-outline-danger delete-button">
                   <i class="bi bi-trash3"></i>

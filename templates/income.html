@@ -20,14 +20,14 @@
           {% for income in income_list %}
 
           <tr>
-            <td class="d-none d-sm-table-cell align-middle">{{ income[0] }}</td>
-            <td class="align-middle">{{ income[1] }}</td>
-            <td class="align-middle">${{ income[2] | money }}</td>
-            <td class="align-middle">{{ income[3].strftime('%Y/%m/%d') }}</td>
-            <td class="text-success align-middle">{{ income[4] | capitalize }}</td>
+            <td class="d-none d-sm-table-cell align-middle">{{ income["category"] }}</td>
+            <td class="align-middle">{{ income["title"] }}</td>
+            <td class="align-middle">${{ income["amount"] | money }}</td>
+            <td class="align-middle">{{ income["created_at"].strftime('%Y/%m/%d') }}</td>
+            <td class="text-success align-middle">{{ income["type"] | capitalize }}</td>
             <td class="align-middle">
               <form action="/delete-transaction" method="POST" class="delete-form m-0">
-                <input type="hidden" name="transaction_id" value="{{ income[5] }}" />
+                <input type="hidden" name="transaction_id" value="{{ income['id'] }}" />
                 <input type="hidden" name="called_in" value="/income" />
                 <button type="button" class="btn btn-sm btn-outline-danger delete-button">
                   <i class="bi bi-trash3"></i>

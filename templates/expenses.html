@@ -20,14 +20,14 @@
           {% for expense in expenses %}
 
           <tr>
-            <td class="d-none d-sm-table-cell align-middle">{{ expense[0] }}</td>
-            <td class="align-middle">{{ expense[1] }}</td>
-            <td class="align-middle">${{ expense[2] | money }}</td>
-            <td class="align-middle">{{ expense[3].strftime('%Y/%m/%d') }}</td>
-            <td class="text-danger align-middle">{{ expense[4] | capitalize }}</td>
+            <td class="d-none d-sm-table-cell align-middle">{{ expense["category"] }}</td>
+            <td class="align-middle">{{ expense["title"] }}</td>
+            <td class="align-middle">${{ expense["amount"] | money }}</td>
+            <td class="align-middle">{{ expense["created_at"].strftime('%Y/%m/%d') }}</td>
+            <td class="text-danger align-middle">{{ expense["type"] | capitalize }}</td>
             <td class="align-middle">
               <form action="/delete-transaction" method="POST" class="delete-form m-0">
-                <input type="hidden" name="transaction_id" value="{{ expense[5] }}" />
+                <input type="hidden" name="transaction_id" value="{{ expense['id'] }}" />
                 <input type="hidden" name="called_in" value="/expenses" />
                 <button type="button" class="btn btn-sm btn-outline-danger delete-button">
                   <i class="bi bi-trash3"></i>
