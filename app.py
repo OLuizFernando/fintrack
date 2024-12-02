@@ -126,7 +126,26 @@ def expenses():
         AND user_id = %s
     """, params=[session["user_id"]], return_value=True)[0]["total_expenses"]
 
-    return render_template("expenses.html", expenses=expenses, total_expenses=total_expenses)
+    categories = db_execute("""
+        SELECT DISTINCT category
+        FROM transactions
+        WHERE type = 'expense'
+        AND user_id = %s
+    """, params=[session["user_id"]], return_value=True)
+
+    categories = [item["category"] for item in categories]
+
+    amount_per_category = db_execute("""
+        SELECT SUM(amount) AS amount_per_category
+        FROM transactions
+        WHERE type = 'expense'
+        AND user_id = %s
+        GROUP BY category;
+    """, params=[session["user_id"]], return_value=True)
+
+    amount_per_category = [item["amount_per_category"] for item in amount_per_category]
+
+    return render_template("expenses.html", expenses=expenses, total_expenses=total_expenses, categories=categories, amount_per_category=amount_per_category)
 
 
 @app.route("/income")
@@ -147,7 +166,26 @@ def income():
         AND user_id = %s
     """, params=[session["user_id"]], return_value=True)[0]["total_income"]
 
-    return render_template("income.html", income_list=income_list, total_income=total_income)
+    categories = db_execute("""
+        SELECT DISTINCT category
+        FROM transactions
+        WHERE type = 'income'
+        AND user_id = %s
+    """, params=[session["user_id"]], return_value=True)
+
+    categories = [item["category"] for item in categories]
+
+    amount_per_category = db_execute("""
+        SELECT SUM(amount) AS amount_per_category
+        FROM transactions
+        WHERE type = 'income'
+        AND user_id = %s
+        GROUP BY category;
+    """, params=[session["user_id"]], return_value=True)
+
+    amount_per_category = [item["amount_per_category"] for item in amount_per_category]
+
+    return render_template("income.html", income_list=income_list, total_income=total_income, categories=categories, amount_per_category=amount_per_category)
 
 
 @app.route("/login", methods=["GET", "POST"])

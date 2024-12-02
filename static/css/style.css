@@ -12,6 +12,10 @@ body {
   background-color: #c41508;
 }
 
+.categoryChart {
+  max-height: 500px;
+}
+
 .clickable {
   cursor: pointer;
   transition: filter 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
