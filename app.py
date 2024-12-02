@@ -119,7 +119,14 @@ def expenses():
         ORDER BY created_at DESC
     """, params=[session["user_id"]], return_value=True)
 
-    return render_template("expenses.html", expenses=expenses)
+    total_expenses = db_execute("""
+        SELECT SUM(amount) AS total_expenses
+        FROM transactions
+        WHERE type = 'expense'
+        AND user_id = %s
+    """, params=[session["user_id"]], return_value=True)[0]["total_expenses"]
+
+    return render_template("expenses.html", expenses=expenses, total_expenses=total_expenses)
 
 
 @app.route("/income")
@@ -133,7 +140,14 @@ def income():
         ORDER BY created_at DESC
     """, params=[session["user_id"]], return_value=True)
 
-    return render_template("income.html", income_list=income_list)
+    total_income = db_execute("""
+        SELECT SUM(amount) AS total_income
+        FROM transactions
+        WHERE type = 'income'
+        AND user_id = %s
+    """, params=[session["user_id"]], return_value=True)[0]["total_income"]
+
+    return render_template("income.html", income_list=income_list, total_income=total_income)
 
 
 @app.route("/login", methods=["GET", "POST"])
