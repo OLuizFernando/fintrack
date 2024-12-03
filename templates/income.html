@@ -8,7 +8,7 @@
         <div class="bg-light shadow rounded-4 h-100 p-4">
           <div class="row">
             <div class="col">
-              <span class="montserrat-regular text-secondary"> Income </span>
+              <span class="montserrat-regular text-secondary"> Total Income </span>
               <h3 class="montserrat-semibold mt-2">${{ total_income | money }}</h3>
             </div>
             <div class="col d-flex align-items-center justify-content-end px-4">
@@ -17,13 +17,24 @@
               </div>
             </div>
           </div>
+          {% if income_list %} {% for item in amount_per_month %}
+          <div class="row border-top my-4 mx-auto"></div>
+          <div class="row">
+            <div class="col">
+              <span class="montserrat-regular text-secondary"> {{ item["month"] }} </span>
+              <h3 class="montserrat-semibold mt-2">${{ item["amount"] | money }}</h3>
+            </div>
+          </div>
+          {% endfor %} {% endif %}
         </div>
       </div>
+      {% if income_list %}
       <div class="col-lg-8 col-12 mb-3 mb-lg-0">
         <div class="d-flex align-items-center justify-content-center bg-light shadow rounded-4 h-100 p-4">
           <canvas id="categoryChart" class="categoryChart"></canvas>
         </div>
       </div>
+      {% endif %}
     </div>
     {% if income_list %}
     <div class="table-responsive bg-light shadow rounded-4 py-4 px-auto px-sm-4 px-lg-5">
@@ -79,6 +90,7 @@
 </script>
 
 <script>
+  // create and config the chart
   const ctx = document.getElementById("categoryChart");
 
   const categories = {{ categories | tojson }};
@@ -107,7 +119,17 @@
     },
   };
 
-  new Chart(ctx, chartConfig);
+  const chart = new Chart(ctx, chartConfig);
+
+  function updateLegendPosition() {
+    const isSmallScreen = window.matchMedia("(max-width: 991px)").matches;
+    chart.options.plugins.legend.position = isSmallScreen ? "top" : "right";
+    chart.update();
+  }
+
+  window.addEventListener("resize", updateLegendPosition);
+
+  updateLegendPosition();
 </script>
 
 {% endblock %}
