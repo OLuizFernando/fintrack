@@ -126,6 +126,9 @@ def expenses():
         AND user_id = %s
     """, params=[session["user_id"]], return_value=True)[0]["total_expenses"]
 
+    if not total_expenses:
+        total_expenses = 0
+
     categories = db_execute("""
         SELECT DISTINCT category
         FROM transactions
@@ -145,7 +148,17 @@ def expenses():
 
     amount_per_category = [item["amount_per_category"] for item in amount_per_category]
 
-    return render_template("expenses.html", expenses=expenses, total_expenses=total_expenses, categories=categories, amount_per_category=amount_per_category)
+    amount_per_month = db_execute("""
+        SELECT TO_CHAR(DATE_TRUNC('month', created_at), 'YYYY/MM') AS month,
+        SUM(amount) AS amount
+        FROM transactions
+        WHERE type = 'expense'
+        AND user_id = %s
+        GROUP BY DATE_TRUNC('month', created_at)
+        ORDER BY month
+    """, params=[session["user_id"]], return_value=True)
+
+    return render_template("expenses.html", expenses=expenses, total_expenses=total_expenses, categories=categories, amount_per_category=amount_per_category, amount_per_month=amount_per_month)
 
 
 @app.route("/income")
@@ -166,6 +179,9 @@ def income():
         AND user_id = %s
     """, params=[session["user_id"]], return_value=True)[0]["total_income"]
 
+    if not total_income:
+        total_income = 0
+
     categories = db_execute("""
         SELECT DISTINCT category
         FROM transactions
@@ -185,7 +201,17 @@ def income():
 
     amount_per_category = [item["amount_per_category"] for item in amount_per_category]
 
-    return render_template("income.html", income_list=income_list, total_income=total_income, categories=categories, amount_per_category=amount_per_category)
+    amount_per_month = db_execute("""
+        SELECT TO_CHAR(DATE_TRUNC('month', created_at), 'YYYY/MM') AS month,
+        SUM(amount) AS amount
+        FROM transactions
+        WHERE type = 'income'
+        AND user_id = %s
+        GROUP BY DATE_TRUNC('month', created_at)
+        ORDER BY month
+    """, params=[session["user_id"]], return_value=True)
+
+    return render_template("income.html", income_list=income_list, total_income=total_income, categories=categories, amount_per_category=amount_per_category, amount_per_month=amount_per_month)
 
 
 @app.route("/login", methods=["GET", "POST"])
