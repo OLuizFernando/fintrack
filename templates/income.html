@@ -20,7 +20,7 @@
         </div>
       </div>
       <div class="col-lg-8 col-12 mb-3 mb-lg-0">
-        <div class="bg-light shadow rounded-4 h-100 p-4">
+        <div class="d-flex align-items-center justify-content-center bg-light shadow rounded-4 h-100 p-4">
           <canvas id="categoryChart" class="categoryChart"></canvas>
         </div>
       </div>
@@ -84,7 +84,7 @@
   const categories = {{ categories | tojson }};
   const amounts = {{ amount_per_category | tojson }}
 
-  new Chart(ctx, {
+  const chartConfig = {
     type: "doughnut",
     data: {
       labels: categories,
@@ -93,10 +93,21 @@
           label: "Amount",
           data: amounts,
           borderWidth: 5,
+          backgroundColor: ["#96d59a", "#7fba84", "#73ac79", "#6da574", "#679e6e", "#659b6c", "#629769", "#5c9063", "#508258"]
         },
       ],
     },
-  });
+    options: {
+      responsive: true,
+      plugins: {
+        legend: {
+          position: "right",
+        },
+      },
+    },
+  };
+
+  new Chart(ctx, chartConfig);
 </script>
 
 {% endblock %}

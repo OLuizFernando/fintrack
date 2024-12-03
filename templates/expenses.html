@@ -20,7 +20,7 @@
         </div>
       </div>
       <div class="col-lg-8 col-12 mb-3 mb-lg-0">
-        <div class="bg-light shadow rounded-4 h-100 p-4">
+        <div class="d-flex align-items-center justify-content-center bg-light shadow rounded-4 h-100 p-4">
           <canvas id="categoryChart" class="categoryChart"></canvas>
         </div>
       </div>
@@ -93,8 +93,17 @@
           label: "Amount",
           data: amounts,
           borderWidth: 5,
+          backgroundColor: ["#E66359", "#E1584D", "#dc4c41", "#d74035", "#d53a2f", "#d23429", "#cf2d21", "#cb2519", "#c41508"]
         },
       ],
+    },
+    options: {
+      responsive: true,
+      plugins: {
+        legend: {
+          position: "right",
+        },
+      },
     },
   });
 </script>
