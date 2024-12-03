@@ -155,7 +155,7 @@ def expenses():
         WHERE type = 'expense'
         AND user_id = %s
         GROUP BY DATE_TRUNC('month', created_at)
-        ORDER BY month
+        ORDER BY month DESC
     """, params=[session["user_id"]], return_value=True)
 
     return render_template("expenses.html", expenses=expenses, total_expenses=total_expenses, categories=categories, amount_per_category=amount_per_category, amount_per_month=amount_per_month)
@@ -208,7 +208,7 @@ def income():
         WHERE type = 'income'
         AND user_id = %s
         GROUP BY DATE_TRUNC('month', created_at)
-        ORDER BY month
+        ORDER BY month DESC
     """, params=[session["user_id"]], return_value=True)
 
     return render_template("income.html", income_list=income_list, total_income=total_income, categories=categories, amount_per_category=amount_per_category, amount_per_month=amount_per_month)
