@@ -35,6 +35,8 @@ def add_transaction():
     title = request.form.get("titleInput")
     date = request.form.get("dateInput")
     amount = request.form.get("amountInput")
+    called_in = request.form.get("called_in")
+
     if amount:
         amount = float(amount.replace("$", "").replace(",", ""))
     
@@ -53,8 +55,14 @@ def add_transaction():
             VALUES (%s, %s, %s, %s, %s, %s)
         """, params=[session["user_id"], title, amount, transaction_type, category, date])
 
-    flash("You've successfully added a new transaction.", "success")
-    return redirect("/dashboard")
+    if called_in == "/dashboard":
+        flash("You've successfully added a new transaction.", "success")
+    elif called_in == "/income":
+        flash("You've successfully added a new income.", "success")
+    elif called_in == "/expenses":
+        flash("You've successfully added a new expense.", "success")
+
+    return redirect(called_in)
 
 @app.route("/dashboard")
 @login_required
