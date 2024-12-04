@@ -253,6 +253,14 @@ def login():
     return redirect("/")
 
 
+@app.route("/logout", methods=["POST"])
+@login_required
+def logout():
+    session.clear()
+    return redirect("/")
+
+
+
 @app.route("/register", methods=["GET", "POST"])
 def register():
     session.clear()
