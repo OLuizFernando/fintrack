@@ -34,7 +34,19 @@
           <span class="navbar-toggler-icon"></span>
         </button>
         <div class="collapse navbar-collapse" id="navbar">
-          {% if not session["user_id"] %}
+          {% if session["user_id"] %}
+          <ul class="navbar-nav ms-auto mt-auto">
+            <li class="nav-item mt-3 mt-md-0 mb-2 mb-md-0">
+              <a class="montserrat-regular fs-5 nav-link mx-2" href="/dashboard">Dashboard</a>
+            </li>
+            <li class="nav-item">
+              <a class="montserrat-regular fs-5 nav-link mx-2" href="/income">Income</a>
+            </li>
+            <li class="nav-item">
+              <a class="montserrat-regular fs-5 nav-link mx-2" href="/expenses">Expenses</a>
+            </li>
+          </ul>
+          {% else %}
           <ul class="navbar-nav ms-auto mt-auto">
             <li class="nav-item mt-3 mt-md-0 mb-2 mb-md-0">
               <a class="montserrat-regular fs-5 nav-link mx-2" href="/register"><i class="bi bi-person-plus me-2"></i>Register</a>
