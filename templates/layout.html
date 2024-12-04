@@ -26,8 +26,8 @@
   <body class="d-flex flex-column vh-100">
     <nav class="navbar navbar-expand-md bg-primary-subtle p-4">
       <div class="container">
-        <a class="navbar-brand" href="/">
-          <img src="../static/images/fintrack_simple_logo.png" alt="Logo" width="30" class="d-inline-block align-text-bottom me-3" />
+        <a class="navbar-brand me-4" href="/">
+          <img src="../static/images/fintrack_simple_logo.png" alt="Logo" width="30" class="d-inline-block align-text-bottom me-2" />
           <span class="montserrat-extrabold text-primary fs-4">FinTrack</span>
         </a>
         <button aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation" class="navbar-toggler" data-bs-target="#navbar" data-bs-toggle="collapse" type="button">
@@ -35,15 +35,22 @@
         </button>
         <div class="collapse navbar-collapse" id="navbar">
           {% if session["user_id"] %}
+          <ul class="navbar-nav me-auto mt-auto">
+            <li class="nav-item mt-3 mt-md-0 mb-2 mb-md-0">
+              <a class="montserrat-regular fs-5 nav-link mx-2" href="/dashboard"><i class="bi bi-clipboard-data me-2"></i>Dashboard</a>
+            </li>
+            <li class="nav-item">
+              <a class="montserrat-regular fs-5 nav-link mx-2" href="/income"><i class="bi bi-chevron-down me-2"></i>Income</a>
+            </li>
+            <li class="nav-item">
+              <a class="montserrat-regular fs-5 nav-link mx-2" href="/expenses"><i class="bi bi-chevron-up me-2"></i></i>Expenses</a>
+            </li>
+          </ul>
           <ul class="navbar-nav ms-auto mt-auto">
             <li class="nav-item mt-3 mt-md-0 mb-2 mb-md-0">
-              <a class="montserrat-regular fs-5 nav-link mx-2" href="/dashboard">Dashboard</a>
-            </li>
-            <li class="nav-item">
-              <a class="montserrat-regular fs-5 nav-link mx-2" href="/income">Income</a>
-            </li>
-            <li class="nav-item">
-              <a class="montserrat-regular fs-5 nav-link mx-2" href="/expenses">Expenses</a>
+              <form id="logout-form" action="/logout" method="POST">
+                <button class="montserrat-regular fs-5 nav-link mx-2" id="logout-button" type="button"><i class="bi bi-box-arrow-right me-2"></i>Log Out</button>
+              </form>
             </li>
           </ul>
           {% else %}
@@ -68,5 +75,15 @@
     </div>
 
     {% endfor %} {% endif %} {% block content %}{% endblock %}
+
+    <script>
+      // confirmation box when logout
+      document.getElementById("logout-button").addEventListener("click", function () {
+        const form = document.getElementById("logout-form");
+        if (confirm("Are you sure you want to log out?")) {
+          form.submit();
+        }
+      });
+    </script>
   </body>
 </html>
