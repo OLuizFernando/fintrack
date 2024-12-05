@@ -301,6 +301,14 @@ def register():
     return render_template("login.html")
 
 
+@app.route("/tester-login")
+def tester_login():
+    session.clear()
+    session["user_id"] = 3
+    
+    return redirect("/")
+
+
 @app.template_filter("money")
 def format_money(value):
     try:
