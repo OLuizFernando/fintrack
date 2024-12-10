@@ -72,6 +72,26 @@ def add_transaction():
 
     return redirect(called_in)
 
+
+@app.route("/create-category", methods=["POST"])
+@login_required
+def create_category():
+    name = request.form.get("nameInput")
+    called_in = request.form.get("called_in")
+    
+    if not name:
+        flash("You must provide a name for the category.", "warning")
+        return redirect(called_in)
+    
+    db_execute("""
+        INSERT INTO categories (user_id, name)
+        VALUES (%s, %s)
+    """, params=[session["user_id"], name])
+
+    flash("You've successfully created a new category.", "success")
+    return redirect(called_in)
+
+
 @app.route("/dashboard")
 @login_required
 def dashboard():
@@ -101,6 +121,7 @@ def dashboard():
         SELECT name
         FROM categories
         WHERE user_id IN (0, %s)
+        ORDER BY name
     """, params=[session["user_id"]], return_value=True)
 
     transactions = db_execute("""
@@ -159,6 +180,7 @@ def expenses():
         SELECT name
         FROM categories
         WHERE user_id IN (0, %s)
+        ORDER BY name
     """, params=[session["user_id"]], return_value=True)
 
     categories = db_execute("""
@@ -222,6 +244,7 @@ def income():
         SELECT name
         FROM categories
         WHERE user_id IN (0, %s)
+        ORDER BY name
     """, params=[session["user_id"]], return_value=True)
 
     categories = db_execute("""
