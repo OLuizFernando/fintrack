@@ -50,7 +50,7 @@
         </div>
       </div>
     </div>
-    <h3 class="montserrat-extrabold text-primary mt-5 mb-3">Add a Transaction</h3>
+    <h4 class="montserrat-extrabold text-primary mt-4 mb-3">Add a Transaction</h4>
     <form action="add-transaction" method="post" class="bg-light shadow rounded-4 py-4 px-4 mb-4">
       <div class="d-flex flex-column flex-lg-row justify-content-between align-items-center px-auto px-lg-4">
         <div class="d-flex flex-column mb-3 mb-lg-auto">
@@ -87,6 +87,19 @@
         </div>
         <div class="d-flex flex-column">
           <button type="submit" class="btn btn-outline-primary montserrat-regular px-5 py-3 rounded-5">Add</button>
+        </div>
+      </div>
+    </form>
+    <h4 class="montserrat-extrabold text-primary mt-4 mb-3">Create a Category</h4>
+    <form action="create-category" method="post" class="col-12 col-lg-5 bg-light shadow rounded-4 py-4 px-4 mb-4">
+      <div class="d-flex flex-column flex-lg-row justify-content-between align-items-center px-auto px-lg-4">
+        <div class="d-flex flex-column mb-3 mb-lg-auto w-100 me-auto me-lg-4">
+          <label for="nameInput" class="form-label montserrat-regular text-secondary">Name</label>
+          <input required type="text" class="form-control" id="nameInput" name="nameInput" />
+        </div>
+        <div class="d-flex flex-column">
+          <button type="submit" class="btn btn-outline-primary montserrat-regular px-5 py-3 rounded-5">Create</button>
+          <input type="hidden" name="called_in" value="/dashboard" />
         </div>
       </div>
     </form>
