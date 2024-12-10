@@ -44,16 +44,24 @@ def add_transaction():
         flash("You must choose the type of transaction.", "warning")
         return redirect("/dashboard")
     
+    category_id = db_execute("""
+        SELECT id
+        FROM categories
+        WHERE name = %s
+        AND user_id IN (0, %s)
+        LIMIT 1
+    """, params=[category, session["user_id"]], return_value=True)[0]["id"]
+
     if not date:
         db_execute("""
-            INSERT INTO transactions (user_id, title, amount, type, category, created_at)
+            INSERT INTO transactions (user_id, title, amount, type, category_id, created_at)
             VALUES (%s, %s, %s, %s, %s, CURRENT_DATE)
-        """, params=[session["user_id"], title, amount, transaction_type, category])
+        """, params=[session["user_id"], title, amount, transaction_type, category_id])
     else:
         db_execute("""
-            INSERT INTO transactions (user_id, title, amount, type, category, created_at)
+            INSERT INTO transactions (user_id, title, amount, type, category_id, created_at)
             VALUES (%s, %s, %s, %s, %s, %s)
-        """, params=[session["user_id"], title, amount, transaction_type, category, date])
+        """, params=[session["user_id"], title, amount, transaction_type, category_id, date])
 
     if called_in == "/dashboard":
         flash("You've successfully added a new transaction.", "success")
@@ -89,14 +97,22 @@ def dashboard():
 
     current_balance = total_income - total_expenses
 
-    transactions = db_execute("""
-        SELECT category, title, amount, created_at, type, id
-        FROM transactions
-        WHERE user_id = %s
-        ORDER BY created_at DESC
+    available_categories = db_execute("""
+        SELECT name
+        FROM categories
+        WHERE user_id IN (0, %s)
     """, params=[session["user_id"]], return_value=True)
 
-    return render_template("dashboard.html", current_balance=current_balance, total_income=total_income, total_expenses=total_expenses, transactions=transactions)
+    transactions = db_execute("""
+        SELECT title, amount, created_at, type, id, (
+            SELECT name FROM categories WHERE id = t.category_id LIMIT 1
+        ) AS category
+        FROM transactions t
+        WHERE user_id = %s
+        ORDER BY created_at DESC;
+    """, params=[session["user_id"]], return_value=True)
+
+    return render_template("dashboard.html", current_balance=current_balance, total_income=total_income, total_expenses=total_expenses, transactions=transactions, available_categories=available_categories)
 
 
 @app.route("/delete-transaction", methods=["POST"])
@@ -120,8 +136,10 @@ def delete_transaction():
 @login_required
 def expenses():
     expenses = db_execute("""
-        SELECT category, title, amount, created_at, type, id
-        FROM transactions
+        SELECT title, amount, created_at, type, id, (
+            SELECT name FROM categories WHERE id = t.category_id LIMIT 1
+        ) AS category
+        FROM transactions t
         WHERE user_id = %s
         AND type = 'expense'
         ORDER BY created_at DESC
@@ -137,11 +155,19 @@ def expenses():
     if not total_expenses:
         total_expenses = 0
 
+    available_categories = db_execute("""
+        SELECT name
+        FROM categories
+        WHERE user_id IN (0, %s)
+    """, params=[session["user_id"]], return_value=True)
+
     categories = db_execute("""
-        SELECT DISTINCT category
-        FROM transactions
-        WHERE type = 'expense'
-        AND user_id = %s
+        SELECT DISTINCT (
+            SELECT name FROM categories WHERE id = t.category_id LIMIT 1
+        ) AS category
+        FROM transactions t
+        WHERE t.type = 'expense'
+        AND t.user_id = %s;
     """, params=[session["user_id"]], return_value=True)
 
     categories = [item["category"] for item in categories]
@@ -151,7 +177,7 @@ def expenses():
         FROM transactions
         WHERE type = 'expense'
         AND user_id = %s
-        GROUP BY category;
+        GROUP BY category_id;
     """, params=[session["user_id"]], return_value=True)
 
     amount_per_category = [item["amount_per_category"] for item in amount_per_category]
@@ -166,15 +192,17 @@ def expenses():
         ORDER BY month DESC
     """, params=[session["user_id"]], return_value=True)
 
-    return render_template("expenses.html", expenses=expenses, total_expenses=total_expenses, categories=categories, amount_per_category=amount_per_category, amount_per_month=amount_per_month)
+    return render_template("expenses.html", expenses=expenses, total_expenses=total_expenses, amount_per_month=amount_per_month, available_categories=available_categories, categories=categories, amount_per_category=amount_per_category)
 
 
 @app.route("/income")
 @login_required
 def income():
     income_list = db_execute("""
-        SELECT category, title, amount, created_at, type, id
-        FROM transactions
+        SELECT title, amount, created_at, type, id, (
+            SELECT name FROM categories WHERE id = t.category_id LIMIT 1
+        ) AS category
+        FROM transactions t
         WHERE user_id = %s
         AND type = 'income'
         ORDER BY created_at DESC
@@ -190,11 +218,19 @@ def income():
     if not total_income:
         total_income = 0
 
+    available_categories = db_execute("""
+        SELECT name
+        FROM categories
+        WHERE user_id IN (0, %s)
+    """, params=[session["user_id"]], return_value=True)
+
     categories = db_execute("""
-        SELECT DISTINCT category
-        FROM transactions
-        WHERE type = 'income'
-        AND user_id = %s
+        SELECT DISTINCT (
+            SELECT name FROM categories WHERE id = t.category_id LIMIT 1
+        ) AS category
+        FROM transactions t
+        WHERE t.type = 'income'
+        AND t.user_id = %s;
     """, params=[session["user_id"]], return_value=True)
 
     categories = [item["category"] for item in categories]
@@ -204,7 +240,7 @@ def income():
         FROM transactions
         WHERE type = 'income'
         AND user_id = %s
-        GROUP BY category;
+        GROUP BY category_id;
     """, params=[session["user_id"]], return_value=True)
 
     amount_per_category = [item["amount_per_category"] for item in amount_per_category]
@@ -219,7 +255,7 @@ def income():
         ORDER BY month DESC
     """, params=[session["user_id"]], return_value=True)
 
-    return render_template("income.html", income_list=income_list, total_income=total_income, categories=categories, amount_per_category=amount_per_category, amount_per_month=amount_per_month)
+    return render_template("income.html", income_list=income_list, total_income=total_income, amount_per_month=amount_per_month, available_categories=available_categories, categories=categories, amount_per_category=amount_per_category)
 
 
 @app.route("/login", methods=["GET", "POST"])
