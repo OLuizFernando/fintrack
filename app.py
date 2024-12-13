@@ -130,7 +130,7 @@ def dashboard():
         ) AS category
         FROM transactions t
         WHERE user_id = %s
-        ORDER BY created_at DESC;
+        ORDER BY created_at DESC
     """, params=[session["user_id"]], return_value=True)
 
     return render_template("dashboard.html", current_balance=current_balance, total_income=total_income, total_expenses=total_expenses, transactions=transactions, available_categories=available_categories)
@@ -183,27 +183,27 @@ def expenses():
         ORDER BY name
     """, params=[session["user_id"]], return_value=True)
 
-    categories = db_execute("""
-        SELECT DISTINCT (
-            SELECT name FROM categories WHERE id = t.category_id LIMIT 1
-        ) AS category
-        FROM transactions t
-        WHERE t.type = 'expense'
-        AND t.user_id = %s;
-    """, params=[session["user_id"]], return_value=True)
+    categories_and_amounts = db_execute("""
+        SELECT 
+            c.name AS category,
+            COALESCE(SUM(t.amount), 0) AS amount_per_category
+        FROM categories c
+        LEFT JOIN transactions t 
+        ON c.id = t.category_id 
+        AND t.type = 'expense'
+        AND t.user_id = %s
+        WHERE c.id IN (
+            SELECT DISTINCT category_id 
+            FROM transactions 
+            WHERE user_id = %s AND type = 'expense'
+        )
+        GROUP BY c.id, c.name
+        ORDER BY c.name
+    """, params=[session["user_id"], session["user_id"]], return_value=True)
 
-    categories = [item["category"] for item in categories]
-
-    amount_per_category = db_execute("""
-        SELECT SUM(amount) AS amount_per_category
-        FROM transactions
-        WHERE type = 'expense'
-        AND user_id = %s
-        GROUP BY category_id;
-    """, params=[session["user_id"]], return_value=True)
-
-    amount_per_category = [item["amount_per_category"] for item in amount_per_category]
-
+    categories = [row['category'] for row in categories_and_amounts]
+    amount_per_category = [row['amount_per_category'] for row in categories_and_amounts]
+    
     amount_per_month = db_execute("""
         SELECT TO_CHAR(DATE_TRUNC('month', created_at), 'YYYY/MM') AS month,
         SUM(amount) AS amount
@@ -247,26 +247,26 @@ def income():
         ORDER BY name
     """, params=[session["user_id"]], return_value=True)
 
-    categories = db_execute("""
-        SELECT DISTINCT (
-            SELECT name FROM categories WHERE id = t.category_id LIMIT 1
-        ) AS category
-        FROM transactions t
-        WHERE t.type = 'income'
-        AND t.user_id = %s;
-    """, params=[session["user_id"]], return_value=True)
+    categories_and_amounts = db_execute("""
+        SELECT 
+            c.name AS category,
+            COALESCE(SUM(t.amount), 0) AS amount_per_category
+        FROM categories c
+        LEFT JOIN transactions t 
+        ON c.id = t.category_id 
+        AND t.type = 'income'
+        AND t.user_id = %s
+        WHERE c.id IN (
+            SELECT DISTINCT category_id 
+            FROM transactions 
+            WHERE user_id = %s AND type = 'income'
+        )
+        GROUP BY c.id, c.name
+        ORDER BY c.name
+    """, params=[session["user_id"], session["user_id"]], return_value=True)
 
-    categories = [item["category"] for item in categories]
-
-    amount_per_category = db_execute("""
-        SELECT SUM(amount) AS amount_per_category
-        FROM transactions
-        WHERE type = 'income'
-        AND user_id = %s
-        GROUP BY category_id;
-    """, params=[session["user_id"]], return_value=True)
-
-    amount_per_category = [item["amount_per_category"] for item in amount_per_category]
+    categories = [row['category'] for row in categories_and_amounts]
+    amount_per_category = [row['amount_per_category'] for row in categories_and_amounts]
 
     amount_per_month = db_execute("""
         SELECT TO_CHAR(DATE_TRUNC('month', created_at), 'YYYY/MM') AS month,
