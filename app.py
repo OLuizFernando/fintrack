@@ -73,6 +73,53 @@ def add_transaction():
     return redirect(called_in)
 
 
+@app.route("/change_password", methods=["GET", "POST"])
+@login_required
+def change_password():
+    username = db_execute("""
+        SELECT username
+        FROM users
+        WHERE id = %s
+    """, params=[session["user_id"]], return_value=True)[0]["username"]
+
+    if request.method == "POST":
+        current_password = request.form.get("passwordInput")
+        current_password_hash = db_execute("""
+            SELECT hash
+            FROM users
+            WHERE id = %s
+        """, params=[session["user_id"]], return_value=True)[0]["hash"]
+
+        new_password = request.form.get("newPasswordInput")
+        confirm_new_password = request.form.get("confirmPasswordInput")
+
+        if not current_password or not new_password or not confirm_new_password:
+            flash("You must fill in all fields.", "warning")
+            return render_template("change_password.html", username=username)
+
+        if not check_password_hash(current_password_hash, current_password):
+            flash("Invalid current password.", "warning")
+            return render_template("change_password.html", username=username)
+
+        if new_password != confirm_new_password:
+            flash("New password confirmation doesn't match.", "warning")
+            return render_template("change_password.html", username=username)
+
+        new_password_hash = generate_password_hash(new_password)
+
+        db_execute("""
+            UPDATE users
+            SET hash = %s
+            WHERE id = %s
+        """, params=[new_password_hash, session["user_id"]])
+
+        flash("You've successfully changed your password.", "success")
+        return redirect("/")
+
+    else:
+        return render_template("change_password.html", username=username)
+
+
 @app.route("/create-category", methods=["POST"])
 @login_required
 def create_category():
@@ -90,6 +137,65 @@ def create_category():
 
     flash("You've successfully created a new category.", "success")
     return redirect(called_in)
+
+
+@app.route("/delete_account", methods=["GET", "POST"])
+@login_required
+def delete_account():
+    username = db_execute("""
+        SELECT username
+        FROM users
+        WHERE id = %s
+    """, params=[session["user_id"]], return_value=True)[0]["username"]
+
+    if request.method == "POST":
+        username = request.form.get("usernameInput")
+        password = request.form.get("passwordInput")
+
+        confirmation = request.form.get("confirmationInput")
+
+        if not username or not password or not confirmation:
+            flash("You must fill in all fields.", "warning")
+            return render_template("delete_account.html", username=username)
+
+        user_info = db_execute("""
+            SELECT username, hash
+            FROM users
+            WHERE id = %s
+        """, params=[session["user_id"]], return_value=True)[0]
+
+        if username.lower() != user_info["username"].lower() or not check_password_hash(
+            user_info["hash"], password
+        ):
+            flash("Invalid username and/or password.", "warning")
+            return render_template("delete_account.html", username=username)
+
+        if confirmation.lower() != "delete my account":
+            flash("Confirmation doesn't match.", "warning")
+            return render_template("delete_account.html", username=username)
+
+        db_execute("""
+            DELETE FROM transactions
+            WHERE user_id = %s
+        """, params=[session["user_id"]])
+        
+        db_execute("""
+            DELETE FROM categories
+            WHERE user_id = %s
+        """, params=[session["user_id"]])
+
+        db_execute("""
+            DELETE FROM users
+            WHERE id = %s
+        """, params=[session["user_id"]])
+
+        session.clear()
+        
+        flash("You've deleted your account.", "danger")
+        return redirect("/")
+
+    else:
+        return render_template("delete_account.html", username=username)
 
 
 @app.route("/dashboard")
@@ -318,6 +424,25 @@ def logout():
     session.clear()
     return redirect("/")
 
+
+@app.route("/options", methods=["GET", "POST"])
+@login_required
+def options():
+    if request.method == "POST":
+        if request.form["action"] == "change_password":
+            return redirect("/change_password")
+
+        if request.form["action"] == "delete_account":
+            return redirect("/delete_account")
+
+    else:
+        username = db_execute("""
+            SELECT username
+            FROM users
+            WHERE id = %s
+        """, params=[session["user_id"]], return_value=True)[0]["username"]
+
+        return render_template("options.html", username=username)
 
 
 @app.route("/register", methods=["GET", "POST"])
