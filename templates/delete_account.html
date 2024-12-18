@@ -1,0 +1,28 @@
+{% extends "layout.html" %} {% block title %} Delete Account {% endblock %} {% block content %}
+
+<main class="flex-grow-1 d-flex flex-column justify-content-center align-items-center">
+  <div class="m-auto">
+    <div class="alert alert-light d-flex align-items-center justify-content-center mb-5 fs-5 shadow rounded-4" role="alert">
+      <i class="bi bi-person-fill me-2"></i>
+      <div class="montserrat-regular">Logged in as <strong class="text-primary">{{ username }}</strong>.</div>
+    </div>
+    <form action="/delete_account" method="post">
+      <div class="mb-3">
+        <label for="usernameInput" class="form-label montserrat-regular px-3">Username</label>
+        <input required type="text" class="form-control rounded-5 px-4 shadow-sm" id="usernameInput" name="usernameInput" />
+      </div>
+      <div class="mb-3">
+        <label for="passwordInput" class="form-label montserrat-regular px-3">Password</label>
+        <input required type="password" class="form-control rounded-5 px-4 shadow-sm" id="passwordInput" name="passwordInput" />
+      </div>
+      <div class="mb-5">
+        <label for="confirmationInput" class="form-label montserrat-regular px-3">To confirm, type "delete my account" below</label>
+        <input required class="form-control rounded-5 px-4 shadow-sm" name="confirmationInput" type="text" />
+      </div>
+      <div class="d-flex flex-column">
+        <button class="btn btn-outline-red montserrat-regular px-5 py-3 rounded-5 shadow-sm" type="submit">Delete account</button>
+      </div>
+    </form>
+  </div>
+</main>
+{% endblock %}
