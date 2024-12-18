@@ -40,6 +40,24 @@
   background-color: #305737 !important;
 }
 
+.btn-outline-red {
+  border-color: #c41508;
+  color: #c41508;
+}
+
+.btn-outline-red:hover,
+.btn-outline-red:focus {
+  border-color: #c41508;
+  background-color: #c41508;
+  color: #fff;
+}
+
+.btn-outline-red:active {
+  border-color: #ac1207 !important;
+  background-color: #ac1207 !important;
+  color: #fff !important;
+}
+
 .form-control:focus {
   border-color: #96d59a;
   box-shadow: 0 0 0 0.2rem #96d59a70;
