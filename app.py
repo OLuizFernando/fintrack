@@ -73,7 +73,7 @@ def add_transaction():
     return redirect(called_in)
 
 
-@app.route("/change_password", methods=["GET", "POST"])
+@app.route("/change-password", methods=["GET", "POST"])
 @login_required
 def change_password():
     username = db_execute("""
@@ -139,7 +139,7 @@ def create_category():
     return redirect(called_in)
 
 
-@app.route("/delete_account", methods=["GET", "POST"])
+@app.route("/delete-account", methods=["GET", "POST"])
 @login_required
 def delete_account():
     username = db_execute("""
@@ -429,11 +429,11 @@ def logout():
 @login_required
 def options():
     if request.method == "POST":
-        if request.form["action"] == "change_password":
-            return redirect("/change_password")
+        if request.form["action"] == "change-password":
+            return redirect("/change-password")
 
-        if request.form["action"] == "delete_account":
-            return redirect("/delete_account")
+        if request.form["action"] == "delete-account":
+            return redirect("/delete-account")
 
     else:
         username = db_execute("""
